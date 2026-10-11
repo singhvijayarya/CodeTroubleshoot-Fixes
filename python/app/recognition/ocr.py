@@ -1,0 +1,37 @@
+
+import os
+
+import pytesseract
+
+
+def configure_tesseract():
+    command = os.environ.get("TESSERACT_CMD")
+
+    if command:
+        pytesseract.pytesseract.tesseract_cmd = command
+        return
+
+    default = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+    if os.path.exists(default):
+        pytesseract.pytesseract.tesseract_cmd = default
+
+
+def tesseract_config():
+    # PSM 6 supports a uniform text block with multiple lines.
+    return "--oem 3 --psm 6"
+
+
+def prepare_for_ocr(original, preprocessed):
+    # Use the preprocessed image, not the original colour image.
+    return preprocessed
+
+
+def extract_text(image, config):
+    configure_tesseract()
+
+    return pytesseract.image_to_string(
+        image,
+        lang="eng",
+        config=config,
+    )
